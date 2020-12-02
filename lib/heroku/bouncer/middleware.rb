@@ -95,11 +95,16 @@ class Heroku::Bouncer::Middleware < Sinatra::Base
           end
         end
         if @expose_user
-          require 'pp'
-          pp user
+          #require 'pp'
+          #pp user
           new_user = {}
           new_user['email'] = user['email']
-          store_write(:user, new_user)
+
+          # if it really an issue with the *size* of this user object in
+          # session, making it a tad bigger should trigger the issue for other
+          # people
+          user['bigfield'] = 'foo' * 200
+          store_write(:user, user)
         else
           store_write(:user, true)
         end
