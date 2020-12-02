@@ -94,7 +94,15 @@ class Heroku::Bouncer::Middleware < Sinatra::Base
             redirect to(@redirect_url) and return
           end
         end
-        @expose_user ? store_write(:user, user) : store_write(:user, true)
+        if @expose_user
+          require 'pp'
+          pp user
+          new_user = {}
+          new_user['email'] = user['email']
+          store_write(:user, new_user)
+        else
+          store_write(:user, true)
+        end
         store_write(:email, user['email']) if @expose_email
       else
         store_write(:user, true)
